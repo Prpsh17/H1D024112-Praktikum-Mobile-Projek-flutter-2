@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:aplikasi_pemmob/login_page.dart';
+import 'package:aplikasi_pemmob/ui/produk_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,11 +7,21 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Flutter Menu',
-      home: LoginPage(),
-    ); // MaterialApp
+    return MaterialApp(
+      title: 'Toko Kita',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        useMaterial3: false,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+        ),
+      ),
+      home: const ProdukPage(),
+    );
   }
 }

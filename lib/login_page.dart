@@ -1,99 +1,98 @@
 import 'package:flutter/material.dart';
-import 'package:aplikasi_pemmob/home_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:aplikasi_pemmob/ui/registrasi_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({Key? key}) : super(key: key);
+
   @override
-  // ignore: library_private_types_in_public_api
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final TextEditingController _usernameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  // ignore: prefer_typing_uninitialized_variables
-  var namauser;
+  final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
-  void _saveUsername() async {
-    // Inisialisasi Share Preferences
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    // Simpan Username ke local storage
-    prefs.setString('username', _usernameController.text);
-  }
-
-  _showInput(namacontroller, placeholder, isPassword) {
-    return TextField(
-      controller: namacontroller,
-      obscureText: isPassword,
-      decoration: InputDecoration(
-        hintText: placeholder,
-      ), // InputDecoration
-    ); // TextField
-  }
-
-  _showDialog(pesan, alamat) {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(pesan),
-          actions: [
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => alamat,
-                  ), // MaterialPageRoute
-                );
-              },
-            ), // TextButton
-          ],
-        ); // AlertDialog
-      },
-    );
-  }
+  final _emailTextboxController = TextEditingController();
+  final _passwordTextboxController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login',style:TextStyle(color:Colors.white) ,),
-        backgroundColor: Colors.blue,
-      ), // AppBar
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _showInput(_usernameController, 'Masukkan Username', false),
-            _showInput(_passwordController, 'Masukkan Password', true),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero,
-                ),
-              ),
-              child: const Text('Login',style:TextStyle(color:Colors.white) ,),
-              onPressed: () {
-                if (_usernameController.text == 'admin' &&
-                    _passwordController.text == 'admin') {
-                  // save Username
-                  _saveUsername();
-                  // Show alert
-                  _showDialog('Anda Berhasil Login', const HomePage());
-                } else {
-                  // Show alert
-                  _showDialog('Username dan Password Salah', const LoginPage());
-                }
-              },
-            ), // ElevatedButton
-          ],
-        ), // Column
-      ), // Container
-    ); // Scaffold
+        title: const Text('Login'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                _emailTextField(),
+                _passwordTextField(),
+                _buttonLogin(),
+                const SizedBox(height: 30),
+                _menuRegistrasi(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _emailTextField() {
+    return TextFormField(
+      decoration: const InputDecoration(labelText: "Email"),
+      keyboardType: TextInputType.emailAddress,
+      controller: _emailTextboxController,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return 'Email harus diisi';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _passwordTextField() {
+    return TextFormField(
+      decoration: const InputDecoration(labelText: "Password"),
+      keyboardType: TextInputType.text,
+      obscureText: true,
+      controller: _passwordTextboxController,
+      validator: (value) {
+        if (value!.isEmpty) {
+          return "Password harus diisi";
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buttonLogin() {
+    return ElevatedButton(
+      child: const Text("Login"),
+      onPressed: () {
+        var validate = _formKey.currentState!.validate();
+      },
+    );
+  }
+
+  Widget _menuRegistrasi() {
+    return Center(
+      child: InkWell(
+        child: const Text(
+          "Registrasi",
+          style: TextStyle(color: Colors.blue),
+        ),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const RegistrasiPage()));
+        },
+      ),
+    );
   }
 }
